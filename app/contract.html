@@ -1,0 +1,199 @@
+<!--
+MIT License
+
+Copyright (c) 2017 Arshdeep Bahga and Vijay Madisetti
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<html>
+<head>
+  <title>SolarCharge</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+  <!-- <link rel="stylesheet" href="./bootstrap.min.css"> -->
+  <link href="./app.css" rel='stylesheet' type='text/css'>
+  <!--  <script src="./app.js"></script>
+  <script src="./jquery.min.js"></script>
+  <script src="./bootstrap.min.js"></script>
+  <script src="./machineMaintainance.js"></script> -->
+ <!-- <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script> -->
+ <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+ <script src="https://cdn.rawgit.com/ethereum/web3.js/develop/dist/web3.js"></script>
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+ <script src="../app.js"></script>
+</head>
+
+<body>
+  <div data-role="page">
+    <center>
+       <h2>SolarCharge</h2>
+    </center>
+    </div>
+
+    <div role="main" class="ui-content" data-inset="false">
+      <div class="row">
+         <div class="card-title has-supporting-text">
+            <center>
+               <h4 style="color:blue;">User Wallet Details</h4>
+               <!--img class="profile-thumbnail" id="profileimg"
+                  src="./img/profile.png" width="20%" /-->
+            </center>
+
+            <label>Name </label>
+            <text id="username">  </text> </br>
+            <label>Email</label>
+            <text id="useremail"></text></br>
+            <label>SolarCoin Balance</label>
+            <text id="balance"></text></br>
+         </div>
+      </div>
+      <div class="row">
+        <div class="card-title has-supporting-text">
+          <center>
+            <h4 style="color:blue;">Charging Details</h4>
+          </center>
+
+          <label>Station ID</label>
+          <text id="stationID" style="font-size:14px"></text></br>
+
+          <label>Location</label>
+          <text id="location" style="font-size:14px"></text></br>
+
+          <label>Rate/second (SolarCoins)</label>
+          <text id="rate"></text>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="card-title has-supporting-text">
+          <center>
+            <h4 style="color:blue;">Payment Options</h4>
+          </center>
+          <input type="text" class="form-control"
+                  id="minutes" placeholder="Minutes to Charge" /></br>
+          <!--label>Minutes to charge</label>
+          <input type="text" name="minutes" id="minutes" value=""
+              data-clear-btn="true" placeholder=""-->
+              <button class="btn btn-primary btn-lg"
+                    onclick="btnpay();">Pay</button>
+
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="card-title has-supporting-text">
+          <center>
+            <h4 style="color:blue;">Confirm Transaction</h4>
+          </center>
+
+          <label>Minutes to charge</label>
+          <text id="cnfminutes"></text></br>
+
+          <label>SolarCoins to Pay</label>
+          <text id="amount"></text></br>
+
+
+          <button class="btn btn-primary btn-lg"
+                onclick="btnconfirm();">Confirm Transaction</button>
+
+
+        </div>
+      </div>
+      <div class="row" style="display:none" id ="cnfPage">
+        <center>
+          <h4 class="card-primary-title clr-black">
+            Transaction Sent</h4>
+        </center>
+
+        <!--label>Transaction ID</label>
+        <p id="txdata" style="font-size:9px"></p>
+        <center>
+          <hr width="98%">
+        </center>
+        <label>Minutes to charge</label>
+        <p id="minutes"></p>
+        <center>
+          <hr width="98%">
+        </center>
+        <label>SolarCoins Paid</label>
+        <p id="amount"></p>
+        <center>
+          <hr width="98%">
+        </center-->
+
+        <p>Connect your device to the plug on the charging station.
+        The charging station will activate in a moment. </p>
+        <br>
+        <center>
+          <img class="profile-thumbnail"
+            src="../../switch.jpg" width="20%" />
+          <img class="profile-thumbnail"
+            src="../../arrow.png" width="20%" />
+          <img class="profile-thumbnail"
+            src="../../plug.png" width="20%" />
+        </center>
+        <br>
+
+      </div>
+    </div>
+
+  </div>
+
+
+  <script>
+    $(document).on('pagebeforecreate', '[data-role="page"]', function() {
+      setTimeout(function() {
+        $.mobile.loading('show');
+      }, 1);
+    });
+
+    $(document).on('pageshow', '[data-role="page"]', function() {
+      setTimeout(function() {
+        $.mobile.loading('hide');
+      }, 1);
+    });
+  </script>
+
+  <script>
+    $(document).ready(function() {
+      var address = sessionStorage.getItem('qrcode');
+      var stationdata = JSON.parse(sessionStorage.getItem('stationdata'));
+      var  stationID = sessionStorage.getItem('stationID');
+      var  rate = sessionStorage.getItem('rate');
+      var  location = sessionStorage.getItem('location');
+      var amount = sessionStorage.getItem('amount');
+      var useremail = sessionStorage.getItem('useremail');
+      var username = sessionStorage.getItem('username');
+      var balance = sessionStorage.getItem('balance');
+
+      var cnfminutes = sessionStorage.getItem('cnfminutes');
+
+      $('#stationID').html(stationID);
+      $('#rate').html(rate);
+      $('#location').html(location);
+      $('#useremail').html(useremail);
+      $('#username').html(username);
+      $('#balance').html(balance);
+      $('#cnfminutes').html(cnfminutes);
+
+    });
+  </script>
+</body>
+</html>

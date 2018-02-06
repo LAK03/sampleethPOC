@@ -1,0 +1,11 @@
+{
+  "background_color": "#FFF",
+  "display": "standalone",
+  "name": "SolarCharge",
+  "short_name": "SolarCharge",
+  "version": "io.cordova.hellocordova",
+  "description": "A sample Apache Cordova SolarCharge application that responds to the deviceready event.",
+  "author": "Apache Cordova Team",
+  "icons": [],
+  "start_url": "loginPage.html"
+}
